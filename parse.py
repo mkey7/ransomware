@@ -273,15 +273,3 @@ def appender(post_title, group_name, description="", website="", published="", p
             dbglog('writing changes to posts.json')
             json.dump(posts, outfile, indent=4, ensure_ascii=False)
         load_dotenv()
-
-        
-        ### Screenshot blog:
-        #groups = openjson('groups.json')
-        #for group in groups:
-        #    if group["name"] == group_name:
-        #        for webpage in group['locations']:
-        #            delay = webpage['delay']*1000 if ( 'delay' in webpage and webpage['delay'] is not None ) \
-        #                else 15000
-        #            screenshot('http://'+webpage['fqdn'],webpage['fqdn'],delay)
-    #else:
-    #    stdlog(post_title + ' already exists')
