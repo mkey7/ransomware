@@ -4,11 +4,14 @@ LABEL org.opencontainers.image.source https://github.com/jmousqueton/ransomwatch
 
 COPY *.py /
 COPY *.json /
-COPY assets/useragents.txt /assets/useragents.txt
+#COPY assets/useragents.txt /assets/useragents.txt
 COPY requirements.txt /requirements.txt
 
+RUN echo "https://mirrors.tuna.tsinghua.edu.cn/debian" > /etc/apt/mirrors/debian.list
+RUN echo "https://mirrors.tuna.tsinghua.edu.cn/debian-security" > /etc/apt/mirrors/debian-security.list 
+
 RUN apt-get update -yy
-RUN apt-get upgrade -yy
+#RUN apt-get upgrade -yy
 RUN apt install -yy \
     g++ gcc libxml2-dev \
     libxslt-dev libffi-dev \
