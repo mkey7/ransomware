@@ -12,24 +12,16 @@ import fnmatch
 # import codecs
 import random
 import calendar
-import tweepy
 import logging
 from datetime import datetime
 from datetime import timedelta
-from datetime import timezone
+# from datetime import timezone
 import subprocess
 import tldextract
 import lxml.html
-import requests
 import pandas as pd
-from dotenv import load_dotenv
-import http.client, urllib
-from mastodon import Mastodon
 import hashlib
-from bs4 import BeautifulSoup
 
-sockshost = '127.0.0.1'
-socksport = 9050
 
 logging.basicConfig(
     format='%(asctime)s,%(msecs)d %(levelname)-8s %(message)s',
@@ -85,77 +77,11 @@ def currentmonthstr():
 # socks5h:// ensures we route dns requests through the socks proxy
 # reduces the risk of dns leaks & allows us to resolve hidden services
 
-oproxies = {
-    'http':  'socks5h://' + str(sockshost) + ':' + str(socksport),
-    'https': 'socks5h://' + str(sockshost) + ':' + str(socksport)
-}
+# proxies = {
+    # 'http':  'socks5h://' + str(sockshost) + ':' + str(socksport),
+    # 'https': 'socks5h://' + str(sockshost) + ':' + str(socksport)
+# }
 
-
-def randomagent():
-    '''
-    randomly return a useragent from assets/useragents.txt
-    '''
-    with open('assets/useragents.txt', encoding='utf-8') as uafile:
-        uas = uafile.read().splitlines()
-        uagt = random.choice(uas)
-        dbglog('sharedutils: ' + 'random user agent - ' + str(uagt))
-    return uagt
-
-def headers():
-    '''
-    returns a key:val user agent header for use with the requests library
-    '''
-    headerstr = {'User-Agent': str(randomagent())}
-    return headerstr
-
-def metafetch(url):
-    '''
-    return the status code & http server using oproxies and headers
-    '''
-    try:
-        stdlog('sharedutils: ' + 'meta prefetch request to ' + str(url))
-        request = requests.head(url, proxies=oproxies, headers=headers(), timeout=20)
-        statcode = request.status_code
-        try:
-            response = request.headers['server']
-            return statcode, response
-        except KeyError as ke:
-            errlog('sharedutils: ' + 'meta prefetch did not discover server - ' + str(ke))
-            return statcode, None
-    except requests.exceptions.Timeout as ret:
-        errlog('sharedutils: ' + 'meta request timeout - ' + str(ret))
-        return None, None
-    except requests.exceptions.ConnectionError as rec:
-        errlog('sharedutils: ' + 'meta request connection error - ' + str(rec))
-        return None, None
-
-def socksfetcher(url):
-    '''
-    fetch a url via socks proxy
-    '''
-    try:
-        stdlog('sharedutils: ' + 'starting socks request to ' + str(url))
-        request = requests.get(url, proxies=oproxies, headers=headers(), timeout=20, verify=False)
-        dbglog(
-            'sharedutils: ' + 'socks request - recieved statuscode - ' \
-                + str(request.status_code)
-            )
-        try:
-            response = request.text
-            return response
-        except AttributeError as ae:
-            errlog('sharedutils: ' + 'socks response error - ' + str(ae))
-            return None
-    except requests.exceptions.Timeout:
-        errlog('geckodriver: ' + 'socks request timed out!')
-        return None
-    except requests.exceptions.ConnectionError as rec:
-        # catch SOCKSHTTPConnectionPool Host unreachable
-        if 'SOCKSHTTPConnectionPool' and 'Host unreachable' in str(rec):
-            errlog('sharedutils: ' + 'socks request unable to route to host, check hsdir resolution status!')
-            return None
-        errlog('sharedutils: ' + 'socks request connection error - ' + str(rec))
-        return None
 
 def siteschema(location):
     '''

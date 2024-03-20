@@ -10,7 +10,7 @@ from sys import platform
 from datetime import datetime
 from bs4 import BeautifulSoup # type: ignore
 from sharedutils import openjson
-from sharedutils import runshellcmd
+# from sharedutils import runshellcmd
 from sharedutils import stdlog, dbglog, errlog   # , honk
 # For screenshot 
 from playwright.sync_api import sync_playwright, TimeoutError as PlaywrightTimeoutError
