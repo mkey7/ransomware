@@ -13,7 +13,6 @@ from datetime import datetime
 import importlib
 from os.path import dirname, basename, isfile, join
 import time
-# local imports
 
 # import parsers
 from markdown import main as markdown
@@ -28,11 +27,13 @@ from sharedutils import siteschema
 # from sharedutils import socksfetcher
 from sharedutils import getsitetitle
 from sharedutils import getonionversion
-from sharedutils import postsjson2cvs
-from sharedutils import sockshost, socksport
+# from sharedutils import postsjson2cvs
 from sharedutils import stdlog, dbglog, errlog, honk
 import glob
 
+sockshost = '127.0.0.1'
+socksport = 9150
+proxy_path = "socks5://"+sockshost+":"+str(socksport)
 
 start_time = time.time()
 print(
@@ -144,15 +145,15 @@ def scraper(force=''):
                 try:
                     with sync_playwright() as play:
                             if group['name'] in ['blackbasta', 'clop', 'metaencryptor','bianlian']:
-                                browser = play.firefox.launch(proxy={"server": "socks5://127.0.0.1:9050"},
+                                browser = play.firefox.launch(proxy={"server": proxy_path},
                                     args=['--unsafely-treat-insecure-origin-as-secure='+host['slug'], "--headless=new"])
                             elif group['name'] in ['ransomed']:
                                  browser = play.firefox.launch(args=['--unsafely-treat-insecure-origin-as-secure='+host['slug']])
                             elif group['name'] in ['knight','lockbit3']:
-                                browser = play.chromium.launch(proxy={"server": "socks5://127.0.0.1:9050"},
+                                browser = play.chromium.launch(proxy={"server": proxy_path},
                                     args=['--unsafely-treat-insecure-origin-as-secure='+host['slug'], "--headless=new"])
                             else:
-                                browser = play.chromium.launch(proxy={"server": "socks5://127.0.0.1:9050"},
+                                browser = play.chromium.launch(proxy={"server": proxy_path},
                                     args=['--unsafely-treat-insecure-origin-as-secure='+host['slug'], "--headless=new"])
                             # 爬取html
                             context = browser.new_context(ignore_https_errors= True )
@@ -269,8 +270,8 @@ if args.mode == 'parse':
         module.main()
 
     stdlog('ransomwatch: ' + 'parse run complete')
-    postsjson2cvs()
-    stdlog('ransomwatch: ' + 'convert json to csv run complete')
+    # postsjson2cvs()
+    # stdlog('ransomwatch: ' + 'convert json to csv run complete')
 
 if args.mode == 'list':
     lister()

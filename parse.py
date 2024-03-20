@@ -23,6 +23,10 @@ from datetime import datetime
 # For Notification 
 from dotenv import load_dotenv
 
+sockshost = '127.0.0.1'
+socksport = 9150
+proxy_path = "socks5://"+sockshost+":"+str(socksport)
+
 # on macOS we use 'grep -oE' over 'grep -oP'
 if platform == 'darwin':
     fancygrep = 'ggrep -oP'
@@ -105,7 +109,7 @@ def screenshot(webpage,fqdn,delay=15000,output=None):
         try:
             tor_prefixes = ["http://stniiomy", "http://noescape", "http://medusa", "http://cactus", "http://hl666"]
             if any(webpage.startswith(prefix) for prefix in tor_prefixes):
-                browser = play.firefox.launch(proxy={"server": "socks5://127.0.0.1:9050"},
+                browser = play.firefox.launch(proxy={"server": proxy_path},
                     args=[''])
                     #args=['--unsafely-treat-insecure-origin-as-secure='+host['slug']])
                 stdlog('(!) exception')
@@ -116,11 +120,11 @@ def screenshot(webpage,fqdn,delay=15000,output=None):
                 browser = play.firefox.launch()
                 stdlog('(!) not via tor')
             elif webpage.startswith("http://knight"):
-                browser = play.chromium.launch(proxy={"server": "socks5://127.0.0.1:9050"},
+                browser = play.chromium.launch(proxy={"server": proxy_path},
                     args=["--headless=new"])
                 stdlog('(!) exception')
             else:
-                browser = play.chromium.launch(proxy={"server": "socks5://127.0.0.1:9050"},
+                browser = play.chromium.launch(proxy={"server": proxy_path},
                     args=[''])
                     #args=['--unsafely-treat-insecure-origin-as-secure='+host['slug']])
             context = browser.new_context(ignore_https_errors= True )
@@ -255,11 +259,12 @@ def appender(post_title, group_name, description="", website="", published="", p
             website1 = ""
             
         ### Post screenshot
+        screenPath = ""
         if post_url !="":
             hash_object = hashlib.md5()
             hash_object.update(post_url.encode('utf-8'))
             hex_digest = hash_object.hexdigest()
-            screenPath= screenshot(post_url,None,15000,hex_digest)
+            screenPath = screenshot(post_url,None,15000,hex_digest)
 
         # newpost = posttemplate(post_title, group_name, str(datetime.today()),description,replace_http_slash(website),published,post_url,country)
         newpost = posttemplate(post_title, group_name, str(datetime.today()),description,website1,published,post_url,country,screenPath,price,pay,email)
