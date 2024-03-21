@@ -22,6 +22,16 @@ import lxml.html
 import pandas as pd
 import hashlib
 
+sockshost = '127.0.0.1'
+socksport = 9150
+proxy_path = "socks5://"+sockshost+":"+str(socksport)
+
+# socks5h:// ensures we route dns requests through the socks proxy
+# reduces the risk of dns leaks & allows us to resolve hidden services
+proxies = {
+    'http':  'socks5h://' + str(sockshost) + ':' + str(socksport),
+    'https': 'socks5h://' + str(sockshost) + ':' + str(socksport)
+} 
 
 logging.basicConfig(
     format='%(asctime)s,%(msecs)d %(levelname)-8s %(message)s',
@@ -74,13 +84,7 @@ def currentmonthstr():
     '''
     return datetime.now().strftime('%B').lower()
 
-# socks5h:// ensures we route dns requests through the socks proxy
-# reduces the risk of dns leaks & allows us to resolve hidden services
 
-# proxies = {
-    # 'http':  'socks5h://' + str(sockshost) + ':' + str(socksport),
-    # 'https': 'socks5h://' + str(sockshost) + ':' + str(socksport)
-# }
 
 
 def siteschema(location):

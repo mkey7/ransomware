@@ -29,11 +29,9 @@ from sharedutils import getsitetitle
 from sharedutils import getonionversion
 # from sharedutils import postsjson2cvs
 from sharedutils import stdlog, dbglog, errlog, honk
+from sharedutils import sockshost, socksport, proxy_path
 import glob
 
-sockshost = '127.0.0.1'
-socksport = 9150
-proxy_path = "socks5://"+sockshost+":"+str(socksport)
 
 start_time = time.time()
 print(

@@ -22,6 +22,7 @@ from PIL.PngImagePlugin import PngInfo
 from datetime import datetime
 # For Notification 
 from dotenv import load_dotenv
+from sharedutils import sockshost, socksport, proxy_path
 
 sockshost = '127.0.0.1'
 socksport = 9150
