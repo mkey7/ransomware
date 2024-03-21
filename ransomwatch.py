@@ -31,6 +31,7 @@ from sharedutils import getonionversion
 from sharedutils import stdlog, dbglog, errlog, honk
 from sharedutils import sockshost, socksport, proxy_path
 import glob
+import getCountry
 
 
 start_time = time.time()
@@ -268,6 +269,10 @@ if args.mode == 'parse':
         module.main()
 
     stdlog('ransomwatch: ' + 'parse run complete')
+    
+    getCountry.main()
+    stdlog("ransomwatch: parse get country complete")
+    
     # postsjson2cvs()
     # stdlog('ransomwatch: ' + 'convert json to csv run complete')
 
