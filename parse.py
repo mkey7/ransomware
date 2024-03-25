@@ -23,10 +23,7 @@ from datetime import datetime
 # For Notification 
 from dotenv import load_dotenv
 from sharedutils import sockshost, socksport, proxy_path
-
-sockshost = '127.0.0.1'
-socksport = 9150
-proxy_path = "socks5://"+sockshost+":"+str(socksport)
+import os.path
 
 # on macOS we use 'grep -oE' over 'grep -oP'
 if platform == 'darwin':
@@ -170,6 +167,16 @@ def screenshot(webpage,fqdn,delay=15000,output=None):
 
     #except:
     #         stdlog('Impossible to webshot {}'.format(webpage))
+    
+def existingscreenshot(output):
+    '''
+    检测快照截图是否存在，如果存在就直接使用存在的截图
+    '''
+    path = 'docs/screenshots/posts/' + output + '.png'
+    if os.path.exists(path):
+        return path
+    else:
+        return ""
 
 
 def existingpost(post_title, group_name):
@@ -260,12 +267,12 @@ def appender(post_title, group_name, description="", website="", published="", p
             website1 = ""
             
         ### Post screenshot
-        screenPath = ""
         if post_url !="":
             hash_object = hashlib.md5()
             hash_object.update(post_url.encode('utf-8'))
             hex_digest = hash_object.hexdigest()
-            screenPath = screenshot(post_url,None,15000,hex_digest)
+            screenshot(post_url,None,15000,hex_digest)
+        screenPath = existingscreenshot(hex_digest)
 
         # newpost = posttemplate(post_title, group_name, str(datetime.today()),description,replace_http_slash(website),published,post_url,country)
         newpost = posttemplate(post_title, group_name, str(datetime.today()),description,website1,published,post_url,country,screenPath,price,pay,email)

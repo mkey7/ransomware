@@ -54,19 +54,6 @@ def errlog2(msg):
 def errlog(msg):
     logging.error(msg)
     stdlog('Send push notification')
-    # load_dotenv()
-    # USER_KEY=os.getenv('PUSH_USER')
-    # API_KEY= os.getenv('PUSH_API')
-    # MESSAGE = "❌ " +  str(msg)
-    # conn = http.client.HTTPSConnection("api.pushover.net:443")
-    # conn.request("POST", "/1/messages.json",
-    # urllib.parse.urlencode({
-    #           "token": API_KEY,
-    #           "user": USER_KEY,
-    #           "message": MESSAGE,
-    #           "html": 1
-    #         }), { "Content-type": "application/x-www-form-urlencoded" })
-    # conn.getresponse()
 
 
 def honk(msg):
@@ -83,8 +70,6 @@ def currentmonthstr():
     return the current, full month name in lowercase
     '''
     return datetime.now().strftime('%B').lower()
-
-
 
 
 def siteschema(location):
