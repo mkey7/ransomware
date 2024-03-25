@@ -494,3 +494,11 @@ def extract_md5_from_filename(file_name):
         if dot_position != -1:
             extracted_text = after_hyphen[:dot_position]
             return extracted_text
+
+def get_emails(text):
+    emails = re.findall(r"[a-z0-9\.\-+_]+@[a-z0-9\.\-+_]+\.[a-z]+", text)
+    return emails
+
+def get_bitcoin(text):
+    bitcoins = re.findall(r"[13][a-km-zA-HJ-NP-Z1-9]{25,36}$")
+    return bitcoins
