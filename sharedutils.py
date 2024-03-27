@@ -21,6 +21,8 @@ import tldextract
 import lxml.html
 import pandas as pd
 import hashlib
+from playwright.sync_api import sync_playwright, TimeoutError as PlaywrightTimeoutError
+from playwright_stealth import stealth_sync
 
 sockshost = '127.0.0.1'
 socksport = 9150
@@ -500,5 +502,21 @@ def get_emails(text):
     return emails
 
 def get_bitcoin(text):
-    bitcoins = re.findall(r"[13][a-km-zA-HJ-NP-Z1-9]{25,36}$")
+    bitcoins = re.findall(r"[13][a-km-zA-HJ-NP-Z1-9]{25,36}$", text)
     return bitcoins
+
+def get_website(url):
+    with sync_playwright() as play:
+        browser = play.chromium.launch(proxy={"server": proxy_path},
+            args=['--unsafely-treat-insecure-origin-as-secure='+url, "--headless=new"])
+        # 爬取html
+        context = browser.new_context(ignore_https_errors= True)
+        page = context.new_page()
+        stealth_sync(page)
+        page.bring_to_front()
+        page.mouse.move(x=500, y=400)
+        page.wait_for_load_state('networkidle')
+        page.mouse.wheel(delta_y=2000, delta_x=0)
+        page.wait_for_load_state('networkidle')
+        page.wait_for_timeout(5000)
+        return page.content()

@@ -8,9 +8,20 @@ Rappel : def appender(post_title, group_name, description="", website="", publis
 """
 import os
 from bs4 import BeautifulSoup
-from sharedutils import errlog, find_slug_by_md5, extract_md5_from_filename
+from sharedutils import errlog, find_slug_by_md5, extract_md5_from_filename, get_website
 from parse import appender
 from datetime import datetime
+
+def get_download(url):
+    context = get_website(url)
+    soup=BeautifulSoup(context,'html.parser')
+    rows = soup.select('.tdownload') #[1:]
+    downloads = []
+    for row in rows:
+        downloads.extend(row.find_all('a')['herf'])
+    return downloads
+    
+
 
 def main():
     for filename in os.listdir('source'):

@@ -72,7 +72,7 @@ def add_watermark(image_path, watermark_image_path='./docs/ransomwarelive.png'):
     stdlog('save watermaked image ' + image_path)
     original.save(image_path, 'PNG')
 
-def posttemplate(victim, group_name, timestamp,description,website,published,post_url,screen_path,price,pay,email):
+def posttemplate(victim, group_name, timestamp,description,website,published,post_url,screen_path,price,pay,email,download):
     '''
     assuming we have a new post - form the template we will use for the new entry in posts.json
     '''
@@ -89,6 +89,7 @@ def posttemplate(victim, group_name, timestamp,description,website,published,pos
         'price'   : price,
         'pay'   : pay,
         'email' : email,
+        'download' : download,
     }
     dbglog(schema)
     return schema
@@ -230,7 +231,7 @@ def replace_http_slash(text):
     return text
 
 
-def appender(post_title, group_name, description="", website="", published="", post_url="",email="",price="",pay="",):
+def appender(post_title, group_name, description="", website="", published="", post_url="",email="",price="",pay="", download=""):
     '''
     append a new post to posts.json
     '''
@@ -275,7 +276,7 @@ def appender(post_title, group_name, description="", website="", published="", p
         screenPath = existingscreenshot(hex_digest)
 
         # newpost = posttemplate(post_title, group_name, str(datetime.today()),description,replace_http_slash(website),published,post_url,country)
-        newpost = posttemplate(post_title, group_name, str(datetime.today()),description,website1,published,post_url,screenPath,price,pay,email)
+        newpost = posttemplate(post_title, group_name, str(datetime.today()),description,website1,published,post_url,screenPath,price,pay,email,download)
         stdlog('adding new post - ' + 'group:' + group_name + ' title:' + post_title)
         posts.append(newpost)
         with open('posts.json', 'w', encoding='utf-8') as outfile:
