@@ -513,6 +513,7 @@ def get_website(url):
         context = browser.new_context(ignore_https_errors= True)
         page = context.new_page()
         stealth_sync(page)
+        page.goto(url)
         page.bring_to_front()
         page.mouse.move(x=500, y=400)
         page.wait_for_load_state('networkidle')

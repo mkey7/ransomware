@@ -8,17 +8,27 @@ Rappel : def appender(post_title, group_name, description="", website="", publis
 """
 import os
 from bs4 import BeautifulSoup
-from sharedutils import errlog, find_slug_by_md5, extract_md5_from_filename, get_website
+from sharedutils import errlog, find_slug_by_md5, extract_md5_from_filename, get_website,stdlog
 from parse import appender
 from datetime import datetime
 
 def get_download(url):
+    stdlog("0mega: find download => "+ url)
     context = get_website(url)
+    print(context)
     soup=BeautifulSoup(context,'html.parser')
     rows = soup.select('.tdownload') #[1:]
+    stdlog("rows : "+str(rows))
     downloads = []
     for row in rows:
-        downloads.extend(row.find_all('a')['herf'])
+    # for a in rows.select('a'):
+        print("row!!!")
+        for a in row.find_all('a'):
+            print(a['href'])
+            path = url[:url.rfind('onion')+5]+a['href']
+            print(path)
+            downloads.append(path)
+            stdlog("path : "+ path)
     return downloads
     
 
@@ -39,7 +49,8 @@ def main():
                     description = columns[2].get_text(strip=True)
                     link = columns[5].find('a')['href']
                     link = url = find_slug_by_md5('0mega', extract_md5_from_filename(html_doc)) +str(link)
-                    appender(title, '0mega', description,"",pubdate,link)
+                    downloads = get_download(link)
+                    appender(title, '0mega', description,"",pubdate,link,download=downloads)
                 file.close()
         except:
             errlog('0mega: ' + 'parsing fail')
