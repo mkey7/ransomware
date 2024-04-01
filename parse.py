@@ -102,7 +102,10 @@ def screenshot(webpage,fqdn,delay=15000,output=None):
     else: 
         stdlog('Post Screenshot --> ' + output)
         name = 'docs/screenshots/posts/' + output + '.png'
-        stdlog("Mode : post")
+        stdlog("Mode: post")
+    #todo 如果照片存在就跳过
+    if os.path.exists(name):
+        return name
     #try:
     with sync_playwright() as play:
         try:
@@ -268,12 +271,13 @@ def appender(post_title, group_name, description="", website="", published="", p
             website1 = ""
             
         ### Post screenshot
+        screenPath = ""
         if post_url !="":
             hash_object = hashlib.md5()
             hash_object.update(post_url.encode('utf-8'))
             hex_digest = hash_object.hexdigest()
             screenshot(post_url,None,15000,hex_digest)
-        screenPath = existingscreenshot(hex_digest)
+            screenPath = existingscreenshot(hex_digest)
 
         # newpost = posttemplate(post_title, group_name, str(datetime.today()),description,replace_http_slash(website),published,post_url,country)
         newpost = posttemplate(post_title, group_name, str(datetime.today()),description,website1,published,post_url,screenPath,price,pay,email,download)
