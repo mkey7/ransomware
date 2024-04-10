@@ -3,7 +3,7 @@
 +------------------------------+------------------+----------+
 | Description | Published Date | Victim's Website | Post URL |
 +------------------------------+------------------+----------+
-|      X      |      X         |                 |     x    |
+|      X      |      X         |                  |     x    |
 +------------------------------+------------------+----------+
 Rappel : def appender(post_title, group_name, description="", website="", published="", post_url=""):
 """
