@@ -16,6 +16,7 @@ import datetime
 
 def main():
     for filename in os.listdir('source'):
+        post_url = "view-source:https://akiral2iz6a7qgd3ayp3l6yub7xx2uep76idk3u2kollpj5z3z636bad.onion/n"
         try:
             if filename.startswith('akira-'):
                 html_doc='source/'+filename
@@ -35,7 +36,7 @@ def main():
                     combined_datetime = datetime.datetime.combine(dt_object.date(), current_time)
                     published = combined_datetime.strftime("%Y-%m-%d %H:%M:%S.%f")
                     #published = dt_object.strftime("%Y-%m-%d %H:%M:%S.%f")
-                    appender(title.replace('\n',''), 'akira', description.replace('\n',''),'',published)
+                    appender(title.replace('\n',''), 'akira', description.replace('\n',''),'',published,post_url)
                 file.close()
         except:
             errlog('akira: ' + 'parsing fail')
