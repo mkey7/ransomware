@@ -28,11 +28,11 @@ import pika
 
 from PIL import Image
 from PIL import ImageDraw
-from PIL import ImageEnhance
-from PIL.PngImagePlugin import PngInfo
 
 sockshost = '127.0.0.1'
 socksport = 9150
+# sockshost = '115.160.185.148'
+# socksport = 12908
 proxy_path = "socks5://"+sockshost+":"+str(socksport)
 
 # socks5h:// ensures we route dns requests through the socks proxy
@@ -512,43 +512,48 @@ def get_bitcoin(text):
     bitcoins = re.findall(r"[13][a-km-zA-HJ-NP-Z1-9]{25,36}$", text)
     return bitcoins
 
-def get_website(url,name=None):
+def get_website(url):
+    hash_object = hashlib.md5()
+    hash_object.update(url.encode('utf-8'))
+    hex_digest = hash_object.hexdigest()
     with sync_playwright() as play:
-        browser = play.chromium.launch(proxy={"server": proxy_path},
-            args=['--unsafely-treat-insecure-origin-as-secure='+url, "--headless=new"])
-        # 爬取html
-        context = browser.new_context(ignore_https_errors= True)
-        page = context.new_page()
-        stealth_sync(page)
-        page.goto(url)
-        page.bring_to_front()
-        page.mouse.move(x=500, y=400)
-        page.wait_for_load_state('networkidle')
-        page.mouse.wheel(delta_y=2000, delta_x=0)
-        page.wait_for_load_state('networkidle')
-        page.wait_for_timeout(5000)
+        try:
+            browser = play.chromium.launch(proxy={"server": proxy_path},
+                args=['--unsafely-treat-insecure-origin-as-secure='+url, "--headless=new"])
+            # 爬取html
+            context = browser.new_context(ignore_https_errors= True)
+            page = context.new_page()
+            stealth_sync(page)
+            page.goto(url)
+            page.bring_to_front()
+            page.mouse.move(x=500, y=400)
+            page.wait_for_load_state('networkidle')
+            page.mouse.wheel(delta_y=2000, delta_x=0)
+            page.wait_for_load_state('networkidle')
+            page.wait_for_timeout(5000)
 
-        if name:
-            name = 'docs/screenshots/posts/' + name + '.png'
+            print('screenshots')
+            name = 'docs/screenshots/posts/' + hex_digest + '.png'
             page.screenshot(path=name, full_page=True)
             image = Image.open(name)
-            metadata = PngInfo()
             
             # Get current date and time
             current_datetime = datetime.now()
             # Format it in ISO format
             iso_formatted = current_datetime.isoformat()
-            current_date = current_datetime.strftime('%Y:%m:%d %H:%M:%S')
-            
-            metadata.add_text("Creation Time",current_date)
             
             draw = ImageDraw.Draw(image)
             draw.text((10, 10), iso_formatted, fill=(0, 0, 0))
             #draw.text((10, 10), "https://www.ransomware.live", fill=(0, 0, 0))
             
-            image.save(name, pnginfo=metadata)
+            image.save(name)
+            # browser.close()
+            return page.content()
+        except PlaywrightTimeoutError:
+            stdlog('Timeout!')
+        except Exception as exception:
+            errlog(exception)
         browser.close()
-        return page.content()
     
 def send_mq(a):
     user_info = pika.PlainCredentials('root', 'root')

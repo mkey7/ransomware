@@ -13,15 +13,19 @@ from sharedutils import errlog, find_slug_by_md5, extract_md5_from_filename,get_
 from parse import appender
 
 def get_description(post,title,published):
-    page = get_website(post)
-    print("------")
 
     hash_object = hashlib.md5()
     hash_object.update(post.encode('utf-8'))
     hex_digest = hash_object.hexdigest()
     filename = 'bianlian-' + hex_digest + '.html'
+    
+    if os.path.exists(filename):
+        return True 
+
     name = os.path.join(os.getcwd(), 'source', filename)
     print(name)
+    page = get_website(post)
+    print("----------")
     with open(name, 'w', encoding='utf-8') as sitesource:
         sitesource.write(page)
         sitesource.close()
@@ -43,12 +47,25 @@ def get_description(post,title,published):
         description =  body.contents[0].string
     print(website)
     print(description)
+    screenshot_path = 'docs/screenshots/posts/' + hex_digest + '.png'
+    print(screenshot_path)
+    email = 'deepmind@onionmail.org'
+    
+    target_paragraphs = body.find_all('p')
 
-        # "screenshot_path": "",
-        # "price": "",
-        # "pay": "",
-        # "email": "",
-        # "download": "" """
+    for a in target_paragraphs:
+        if "Revenue:" in a.get_text():
+            price = a.get_text()
+            price = price[price.find('$'):]
+            print(price)
+            
+    download = []
+    downloads = body.find_all('a')
+    for b in downloads:
+        if 'zip' in b['href']:
+            print(b)
+            download.append(b['href'])
+    appender(title, 'bianlian', description,website,published,post,email,price,'',download)
 
 
 
@@ -72,11 +89,10 @@ def main():
                     print(post)
                     print(title)
                     print(published)
-                    get_description(post,title,published)
-                    #     url = "bianlianlbc5an4kgnay3opdemgcryg2kpfcbgczopmm3dnbz3uaunad.onion" + str(post)
-                    # description = div.div.text.strip()
-                    # description = description.replace('%20',' ')
-                    # appender(title, 'bianlian', description,"","",url)
+                    try:
+                        get_description(post,title,published)
+                    except:
+                        errlog('failed to get : '+post)
                 file.close()
         except:
             errlog("Failed during : " + filename)
