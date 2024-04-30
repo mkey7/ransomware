@@ -23,7 +23,13 @@ import pandas as pd
 import hashlib
 from playwright.sync_api import sync_playwright, TimeoutError as PlaywrightTimeoutError
 from playwright_stealth import stealth_sync
+
 import pika
+
+from PIL import Image
+from PIL import ImageDraw
+from PIL import ImageEnhance
+from PIL.PngImagePlugin import PngInfo
 
 sockshost = '127.0.0.1'
 socksport = 9150
@@ -506,7 +512,7 @@ def get_bitcoin(text):
     bitcoins = re.findall(r"[13][a-km-zA-HJ-NP-Z1-9]{25,36}$", text)
     return bitcoins
 
-def get_website(url):
+def get_website(url,name=None):
     with sync_playwright() as play:
         browser = play.chromium.launch(proxy={"server": proxy_path},
             args=['--unsafely-treat-insecure-origin-as-secure='+url, "--headless=new"])
@@ -521,6 +527,27 @@ def get_website(url):
         page.mouse.wheel(delta_y=2000, delta_x=0)
         page.wait_for_load_state('networkidle')
         page.wait_for_timeout(5000)
+
+        if name:
+            name = 'docs/screenshots/posts/' + name + '.png'
+            page.screenshot(path=name, full_page=True)
+            image = Image.open(name)
+            metadata = PngInfo()
+            
+            # Get current date and time
+            current_datetime = datetime.now()
+            # Format it in ISO format
+            iso_formatted = current_datetime.isoformat()
+            current_date = current_datetime.strftime('%Y:%m:%d %H:%M:%S')
+            
+            metadata.add_text("Creation Time",current_date)
+            
+            draw = ImageDraw.Draw(image)
+            draw.text((10, 10), iso_formatted, fill=(0, 0, 0))
+            #draw.text((10, 10), "https://www.ransomware.live", fill=(0, 0, 0))
+            
+            image.save(name, pnginfo=metadata)
+        browser.close()
         return page.content()
     
 def send_mq(a):

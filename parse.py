@@ -143,10 +143,6 @@ def screenshot(webpage,fqdn,delay=15000,output=None):
             page.screenshot(path=name, full_page=True)
             image = Image.open(name)
             metadata = PngInfo()
-            metadata.add_text("Source", "Ransomware.live")
-            metadata.add_text("Copyright", "Ransomware.live")
-            metadata.add_text("Description",webpage)
-            metadata.add_text("Author","Julien Mousqueton")
             
             # Get current date and time
             current_datetime = datetime.now()
