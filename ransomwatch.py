@@ -6,7 +6,7 @@ ransomwatch
 does what it says on the tin
 '''
 # from ast import parse
-import os, hashlib
+import os, hashlib, sys
 import json
 import argparse
 from datetime import datetime
@@ -32,7 +32,6 @@ from sharedutils import stdlog, dbglog, errlog, honk
 from sharedutils import sockshost, socksport, proxy_path
 import glob
 import getCountry
-
 
 start_time = time.time()
 print(
@@ -282,3 +281,8 @@ if args.mode == 'list':
 end_time = time.time()
 elapsed_time = end_time - start_time
 stdlog(f"Script executed in {elapsed_time:.4f} seconds")
+
+# 遍历已导入的模块并打印模块名称
+# print("Imported packages:")
+# for module_name in sys.modules:
+    # print(module_name)

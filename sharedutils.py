@@ -555,25 +555,3 @@ def get_website(url):
             errlog(exception)
         browser.close()
     
-def send_mq(a):
-    user_info = pika.PlainCredentials('root', 'root')
-    connection = pika.BlockingConnection(pika.ConnectionParameters('ip', 5672, '/', user_info))
-
-# 创建一个channel
-    channel = connection.channel()
-
-# 如果指定的queue不存在，则会创建一个queue，如果已经存在 则不会做其他动作，官方推荐，每次使用时都可以加上这句
-    channel.queue_declare(queue='durable_queue',durable=True)
-#PS：这里不同种队列不允许名字相同
-
-
-    for i in range(0, 100):
-        channel.basic_publish(exchange='',
-                              routing_key='durable_queue',
-                              body='{}'.format(i),
-                              properties=pika.BasicProperties(delivery_mode=2)
-                              )
-
-
-# 关闭连接
-# connection.close()

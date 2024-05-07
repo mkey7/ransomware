@@ -237,7 +237,7 @@ def appender(post_title, group_name, description="", website="", published="", p
     if len(post_title) == 0:
         stdlog('post_title is empty')
         return
-    # Check exclusion 
+    """ # Check exclusion 
     with open('exceptions.txt', 'r') as f:
     # Read the contents of the file
         exceptions = f.read()
@@ -245,7 +245,7 @@ def appender(post_title, group_name, description="", website="", published="", p
             stdlog('(!) '+ post_title + ' is in exceptions')
             return
     # limit length of post_title to 90 chars
-    #country=''
+    #country='' """
     if len(post_title) > 90:
         post_title = post_title[:90]
     post_title=html.unescape(post_title)
