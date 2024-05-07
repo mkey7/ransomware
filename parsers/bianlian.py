@@ -23,18 +23,14 @@ def get_description(post,title,published):
         return True 
 
     name = os.path.join(os.getcwd(), 'source', filename)
-    print(name)
     page = get_website(post)
-    print("----------")
     with open(name, 'w', encoding='utf-8') as sitesource:
         sitesource.write(page)
         sitesource.close()
-    print("===========")
     
     # todo 提取相关字段
     soup=BeautifulSoup(page,'html.parser')
     post_title = soup.title.string
-    print(post_title)
 
     post_url = post    
 
@@ -45,10 +41,7 @@ def get_description(post,title,published):
     else:
         website = ''
         description =  body.contents[0].string
-    print(website)
-    print(description)
     screenshot_path = 'docs/screenshots/posts/' + hex_digest + '.png'
-    print(screenshot_path)
     email = 'deepmind@onionmail.org'
     
     target_paragraphs = body.find_all('p')
