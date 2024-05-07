@@ -24,12 +24,16 @@ from datetime import datetime
 from dotenv import load_dotenv
 from sharedutils import sockshost, socksport, proxy_path
 import os.path
+from rabbitMQ import mq
 
 # on macOS we use 'grep -oE' over 'grep -oP'
 if platform == 'darwin':
     fancygrep = 'ggrep -oP'
 else:
     fancygrep = 'grep -oP'
+
+# rabbitMQ 的实例    
+mq1 = None
 
 
 def add_watermark(image_path, watermark_image_path='./docs/ransomwarelive.png'):
@@ -229,6 +233,23 @@ def replace_http_slash(text):
     text = re.sub(r'https:/([^/])', r'https://\1', text)
     return text
 
+def sendMQ(data):
+    """
+    将解析到的数据发送给rabbitMQ，插入天眼数据库
+    """
+    stdlog('sending rabbitMQ new post - ' + 'group:' + data['group_name'] + ' title:' + data['post_title'])
+    mq1 = mq.MQ()
+    """
+    if mq1 is None:
+        try:
+            mq1 = mq.MQ()
+            stdlog("rabbitMQ connected!")
+        except:
+            errlog("failed to connect the rabbitMQ-server")
+    """
+    mq.post2page(data,mq1)
+    
+
 
 def appender(post_title, group_name, description="", website="", published="", post_url="",email="",price="",pay="", download=""):
     '''
@@ -287,3 +308,6 @@ def appender(post_title, group_name, description="", website="", published="", p
             dbglog('writing changes to posts.json')
             json.dump(posts, outfile, indent=4, ensure_ascii=False)
         load_dotenv()
+        
+        # 发送数据到rabbitMQ
+        sendMQ(newpost)
