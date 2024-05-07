@@ -143,10 +143,6 @@ def screenshot(webpage,fqdn,delay=15000,output=None):
             page.screenshot(path=name, full_page=True)
             image = Image.open(name)
             metadata = PngInfo()
-            metadata.add_text("Source", "Ransomware.live")
-            metadata.add_text("Copyright", "Ransomware.live")
-            metadata.add_text("Description",webpage)
-            metadata.add_text("Author","Julien Mousqueton")
             
             # Get current date and time
             current_datetime = datetime.now()
@@ -241,7 +237,7 @@ def appender(post_title, group_name, description="", website="", published="", p
     if len(post_title) == 0:
         stdlog('post_title is empty')
         return
-    # Check exclusion 
+    """ # Check exclusion 
     with open('exceptions.txt', 'r') as f:
     # Read the contents of the file
         exceptions = f.read()
@@ -249,7 +245,7 @@ def appender(post_title, group_name, description="", website="", published="", p
             stdlog('(!) '+ post_title + ' is in exceptions')
             return
     # limit length of post_title to 90 chars
-    #country=''
+    #country='' """
     if len(post_title) > 90:
         post_title = post_title[:90]
     post_title=html.unescape(post_title)

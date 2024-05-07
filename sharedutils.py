@@ -23,10 +23,16 @@ import pandas as pd
 import hashlib
 from playwright.sync_api import sync_playwright, TimeoutError as PlaywrightTimeoutError
 from playwright_stealth import stealth_sync
+
 import pika
+
+from PIL import Image
+from PIL import ImageDraw
 
 sockshost = '127.0.0.1'
 socksport = 9150
+# sockshost = '115.160.185.148'
+# socksport = 12908
 proxy_path = "socks5://"+sockshost+":"+str(socksport)
 
 # socks5h:// ensures we route dns requests through the socks proxy
@@ -507,41 +513,45 @@ def get_bitcoin(text):
     return bitcoins
 
 def get_website(url):
+    hash_object = hashlib.md5()
+    hash_object.update(url.encode('utf-8'))
+    hex_digest = hash_object.hexdigest()
     with sync_playwright() as play:
-        browser = play.chromium.launch(proxy={"server": proxy_path},
-            args=['--unsafely-treat-insecure-origin-as-secure='+url, "--headless=new"])
-        # 爬取html
-        context = browser.new_context(ignore_https_errors= True)
-        page = context.new_page()
-        stealth_sync(page)
-        page.goto(url)
-        page.bring_to_front()
-        page.mouse.move(x=500, y=400)
-        page.wait_for_load_state('networkidle')
-        page.mouse.wheel(delta_y=2000, delta_x=0)
-        page.wait_for_load_state('networkidle')
-        page.wait_for_timeout(5000)
-        return page.content()
+        try:
+            browser = play.chromium.launch(proxy={"server": proxy_path},
+                args=['--unsafely-treat-insecure-origin-as-secure='+url, "--headless=new"])
+            # 爬取html
+            context = browser.new_context(ignore_https_errors= True)
+            page = context.new_page()
+            stealth_sync(page)
+            page.goto(url)
+            page.bring_to_front()
+            page.mouse.move(x=500, y=400)
+            page.wait_for_load_state('networkidle')
+            page.mouse.wheel(delta_y=2000, delta_x=0)
+            page.wait_for_load_state('networkidle')
+            page.wait_for_timeout(5000)
+
+            print('screenshots')
+            name = 'docs/screenshots/posts/' + hex_digest + '.png'
+            page.screenshot(path=name, full_page=True)
+            image = Image.open(name)
+            
+            # Get current date and time
+            current_datetime = datetime.now()
+            # Format it in ISO format
+            iso_formatted = current_datetime.isoformat()
+            
+            draw = ImageDraw.Draw(image)
+            draw.text((10, 10), iso_formatted, fill=(0, 0, 0))
+            #draw.text((10, 10), "https://www.ransomware.live", fill=(0, 0, 0))
+            
+            image.save(name)
+            # browser.close()
+            return page.content()
+        except PlaywrightTimeoutError:
+            stdlog('Timeout!')
+        except Exception as exception:
+            errlog(exception)
+        browser.close()
     
-def send_mq(a):
-    user_info = pika.PlainCredentials('root', 'root')
-    connection = pika.BlockingConnection(pika.ConnectionParameters('ip', 5672, '/', user_info))
-
-# 创建一个channel
-    channel = connection.channel()
-
-# 如果指定的queue不存在，则会创建一个queue，如果已经存在 则不会做其他动作，官方推荐，每次使用时都可以加上这句
-    channel.queue_declare(queue='durable_queue',durable=True)
-#PS：这里不同种队列不允许名字相同
-
-
-    for i in range(0, 100):
-        channel.basic_publish(exchange='',
-                              routing_key='durable_queue',
-                              body='{}'.format(i),
-                              properties=pika.BasicProperties(delivery_mode=2)
-                              )
-
-
-# 关闭连接
-# connection.close()
