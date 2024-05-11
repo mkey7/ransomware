@@ -9,7 +9,7 @@
 
 import os, hashlib
 from bs4 import BeautifulSoup
-from sharedutils import errlog, find_slug_by_md5, extract_md5_from_filename,get_website,existingpost
+from sharedutils import stdlog,errlog,get_website,existingpost
 from parse import appender
 
 def get_description(post,title,published):
@@ -24,6 +24,7 @@ def get_description(post,title,published):
 
     name = os.path.join(os.getcwd(), 'source', filename)
     page = get_website(post)
+    stdlog("fetching bianlian-"+title)
     with open(name, 'w', encoding='utf-8') as sitesource:
         sitesource.write(page)
         sitesource.close()
@@ -31,8 +32,6 @@ def get_description(post,title,published):
     # todo 提取相关字段
     soup=BeautifulSoup(page,'html.parser')
     post_title = soup.title.string
-
-    post_url = post    
 
     body = soup.section
     if body.p.find('a'):
@@ -50,13 +49,11 @@ def get_description(post,title,published):
         if "Revenue:" in a.get_text():
             price = a.get_text()
             price = price[price.find('$'):]
-            print(price)
             
     download = []
     downloads = body.find_all('a')
     for b in downloads:
         if 'zip' in b['href']:
-            print(b)
             download.append(b['href'])
     appender(title, 'bianlian', description,website,published,post,email,price,'',download)
 
