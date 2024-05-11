@@ -9,7 +9,7 @@
 
 import os, hashlib
 from bs4 import BeautifulSoup
-from sharedutils import errlog, find_slug_by_md5, extract_md5_from_filename,get_website
+from sharedutils import errlog, find_slug_by_md5, extract_md5_from_filename,get_website,existingpost
 from parse import appender
 
 def get_description(post,title,published):
@@ -79,11 +79,9 @@ def main():
                     title = div.a.string
                     published = div.span.string
                     
-                    print(post)
-                    print(title)
-                    print(published)
                     try:
-                        get_description(post,title,published)
+                        if existingpost(title,'bianlian'):
+                            get_description(post,title,published)
                     except:
                         errlog('failed to get : '+post)
                 file.close()
