@@ -27,7 +27,6 @@ def fetch_json_from_onion_url(onion_url):
         response = requests.get(onion_url, proxies=proxies,verify=False)
         response.raise_for_status()  # Check for any HTTP errors
     except requests.exceptions.RequestException as e:
-        # stdlog("Error:", e)
         return None
     # Assuming the response contains JSON data, parse it
     json_data = response.json()
