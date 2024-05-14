@@ -50,6 +50,8 @@ def main():
                 for post in posts_data:
                     title = post['attributes']['title']
                     victim = title.split('\\')[0]
+                    price = title.split('\\')[1]
+                    country = title.split('\\')[2]
                     website = title.split('\\')[0].strip() if '\\' in title else title.strip()                  
                     published_at = datetime.strptime(post['attributes']['publishedAt'], "%Y-%m-%dT%H:%M:%S.%fZ")
                     postdate = published_at.strftime("%Y-%m-%d %H:%M:%S.%f")
@@ -58,8 +60,11 @@ def main():
                     content = cut_content_before_link(content).replace('6wuivqgrv2g7brcwhjw5co3vligiqowpumzkcyebku7i2busrvlxnzid','***************')
                     post_url = post['attributes']['slug']  # Replace 'link_field' with actual field name
                     post_url = "https://cactusbloguuodvqjmnzlwetjlpj6aggc6iocwhuupb47laukux7ckid.onion/posts/" + post_url
-                    # print('--> ', post_url)
-                    appender(victim,'cactus',content,website,postdate,post_url)
+
+                    download = content[content.rfind('Mirror')+8:]
+                    description = content[content.find("#1")+2:content.rfind('Download link #1')]
+
+                    appender(victim,'cactus',description,website,postdate,post_url,'',price,'',download,country)
         except:
             errlog('cactus : ' + 'parsing fail')
             pass
