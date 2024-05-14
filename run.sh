@@ -1,3 +1,4 @@
-#!/usr/bin/bash
-python3 ransomwatch.py scrape 
-python3 ransomwatch.py parse 
+#!/bin/bash
+cd /home/ransomware
+python /home/ransomware/ransomwatch.py scrape 
+python /home/ransomware/ransomwatch.py parse 
