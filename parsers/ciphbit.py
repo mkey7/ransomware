@@ -51,7 +51,6 @@ def main():
                     
                     down = post_url + h5[1].find('a')['id']
 
-                #     # TODO description内容缺失
                     appender(title, 'ciphbit', description,website,published,post_url,download=down)
                 file.close()
         except:
