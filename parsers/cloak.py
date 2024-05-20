@@ -10,7 +10,7 @@ import os
 from bs4 import BeautifulSoup
 from sharedutils import errlog, find_slug_by_md5, extract_md5_from_filename,stdlog
 from parse import appender
-
+# TODO 该这个组织了
 def main():
     for filename in os.listdir('source'):
         try:
