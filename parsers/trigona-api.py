@@ -10,24 +10,23 @@ import requests
 import socks
 import json
 from sharedutils import stdlog, dbglog, errlog   # , honk
-from sharedutils import openjson
+from sharedutils import openjson,proxies
 from datetime import datetime
 from parse import appender
 import re
 
 
 # Assuming Tor is running on default port 9050.
-proxies = {
-    'http': 'socks5h://localhost:9050',
-    'https': 'socks5h://localhost:9050'
-}
+# proxies = {
+    # 'http': 'socks5h://localhost:9050',
+    # 'https': 'socks5h://localhost:9050'
+# }
 
 def fetch_json_from_onion_url(onion_url):
     try:
         response = requests.get(onion_url, proxies=proxies,verify=False)
         response.raise_for_status()  # Check for any HTTP errors
     except requests.exceptions.RequestException as e:
-        stdlog("Error:", e)
         return None
     # Assuming the response contains JSON data, parse it
     json_data = response.json()

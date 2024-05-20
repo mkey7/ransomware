@@ -555,3 +555,15 @@ def get_website(url):
             errlog(exception)
         browser.close()
     
+def existingpost(post_title, group_name):
+    '''
+    check if a post already exists in posts.json
+    '''
+    posts = openjson('posts.json')
+    # posts = openjson('posts.json')
+    for post in posts:
+        if post['post_title'].lower() == post_title.lower() and post['group_name'] == group_name:
+            #dbglog('post already exists: ' + post_title)
+            return True
+    dbglog('post does not exist: ' + post_title)
+    return False

@@ -26,7 +26,8 @@ def main():
                     victim = tds[0].text.strip()
                     #description = tds[2].text.strip()
                     #appender(victim, 'clop','_URL_')
-                    print(victim)
+                    download = tds[2].text.strip()
+                    appender(victim,'clop',download=download)
         except:
             errlog('clop-torrent: ' + 'parsing fail')
             pass

@@ -27,9 +27,14 @@ def main():
                     title = title.text.strip()
                     descs = div.find_all('p')
                     description = ''
+                    website = ''
+                    print(post)
                     for desc in descs:
                         description += desc.text.strip()
-                    appender(title, 'blackbasta', description.replace('\n',' ').replace('ADDRESS',' Address '),"","",post)
+                        if 'SITE:' in desc.get_text():
+                            website = desc.get_text()
+                            website = website[website.find('w'):]
+                    appender(title, 'blackbasta', description.replace('\n',' ').replace('ADDRESS',' Address '),website,'',post)
                 file.close()
         except:
             errlog('blackbasta: ' + 'parsing fail')
