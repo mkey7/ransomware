@@ -53,10 +53,6 @@ def group2site(post,MQ):
         site['url'] = u['slug'][u['slug'].find('//')+2:]
         site['urlSha256'] = sha256_encode(site['url'])
         
-        
-        # TODO 发送mq
-        print(site)
-        
         MQ.send_site(json.dumps(site),site['urlSha256'])
 
     # 尚缺的字段
