@@ -9,9 +9,6 @@ RUN apt install -yy \
     make curl
 
 COPY . /home/ransomwatch
-RUN mkdir /home/ransomwatch/source 
-RUN touch /home/ransomwatch/posts.json
-RUN echo "[  ]" >> /home/ransomwatch/posts.json
 
 # RUN pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
 RUN pip3 install -r /home/ransomwatch/requirements.txt
