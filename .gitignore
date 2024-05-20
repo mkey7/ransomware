@@ -4,3 +4,6 @@ docs/*
 posts.json
 source/*
 exceptions.txt
+__pycache__/
+rabbitMQ/__pycache__/
+parsers/__pycache__/
