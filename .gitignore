@@ -1,5 +1,3 @@
-node_modules/
-test_env/
 docs/*
 posts.json
 source/*
