@@ -8,3 +8,5 @@ rabbitMQ/__pycache__/
 rabbitMQ/__pycache__/*
 parsers/__pycache__/
 parsers/__pycache__/*
+rabbitMQ/__pycache__/common_pb2.cpython-311.pyc
+rabbitMQ/__pycache__/mq.cpython-311.pyc

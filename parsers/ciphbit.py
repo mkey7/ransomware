@@ -13,7 +13,6 @@ from sharedutils import errlog, find_slug_by_md5, extract_md5_from_filename, rem
 from parse import appender
 from datetime import datetime
 
-# TODO 完成该组织的分析
 
 # Define a function to convert the date format
 def convert_date_format(date):
