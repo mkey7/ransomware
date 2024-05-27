@@ -9,8 +9,8 @@
 
 import os, hashlib
 from bs4 import BeautifulSoup
-from sharedutils import stdlog,errlog,get_website,existingpost
-from parse import appender
+from sharedutils import stdlog,errlog,get_website
+from parse import appender,existingpost
 
 def get_description(post,title,published):
 
