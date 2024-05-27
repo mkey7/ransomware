@@ -529,15 +529,16 @@ def get_website(url,group_name):
             context = browser.new_context(ignore_https_errors= True)
             page = context.new_page()
             stealth_sync(page)
-            page.goto(url)
+            page.goto(url, wait_until='load', timeout = 120000)
             page.bring_to_front()
+            page.wait_for_timeout(5000)
             page.mouse.move(x=500, y=400)
             page.wait_for_load_state('networkidle')
             page.mouse.wheel(delta_y=2000, delta_x=0)
             page.wait_for_load_state('networkidle')
             page.wait_for_timeout(5000)
 
-            print('screenshots')
+            # print('screenshots')
             name = 'docs/screenshots/posts/' + hex_digest + '.png'
             page.screenshot(path=name, full_page=True)
             image = Image.open(name)

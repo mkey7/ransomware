@@ -14,12 +14,25 @@ from parse import appender, existingpost
 import re
 
 # TODO 完成单独爬取网页
-def get_post(url):
+def get_post(url,group_name):
     print(url)
-    page = get_website(url)
-    print(page)
-    
-
+    try:
+# FIXME 这个功能没有实现，网页爬取失败
+        page = get_website(url,group_name)
+        print(page)
+        soup=BeautifulSoup(page,'html.parser')
+        
+        # 提取title
+        header_tag = soup.find('header',class_='post-header')
+        span_tag = header_tag.find('span')
+        title = span_tag.text
+        print(title)
+        
+        # 提取描述
+        post_content_section = soup.find('section', class_='post-content')
+        print(post_content_section)
+    except: 
+        errlog("failed to get : "+ url)
 
 
 def main():
@@ -55,14 +68,14 @@ def main():
                     date_formatted = date[6:10] + "-" + date[3:5] + "-" + date[0:2] + " 00:00:00.00000"
 
                     # Extract URL
-                    url = "http://sbc2zv2qnz5vubwtx3aobfpkeao6l4igjegm3xx7tk5suqhjkp5jxtqd.onion/" + article.find("a").get("href")
+                    url = "http://sbc2zv2qnz5vubwtx3aobfpkeao6l4igjegm3xx7tk5suqhjkp5jxtqd.onion" + article.find("a").get("href")
 
-                    get_post(url)
+                    # get_post(url,group_name)
 
                     # Extract description
                     description = article.find("p", class_="post-excerpt").text.strip()
 
-                    # appender(title, 'donutleaks', description.replace('|','-'),'',date_formatted,'http://sbc2zv2qnz5vubwtx3aobfpkeao6l4igjegm3xx7tk5suqhjkp5jxtqd.onion'+url)
+                    appender(title, 'donutleaks', description.replace('|','-'),'',date_formatted,url)
                 file.close()
         except:
             errlog('donutleaks: ' + 'parsing fail')
