@@ -23,11 +23,8 @@ def get_description(post,title,published):
         return True 
 
     name = os.path.join(os.getcwd(), 'source', filename)
-    page = get_website(post)
+    page = get_website(post,'bianlian')
     stdlog("fetching bianlian-"+title)
-    with open(name, 'w', encoding='utf-8') as sitesource:
-        sitesource.write(page)
-        sitesource.close()
     
     # todo 提取相关字段
     soup=BeautifulSoup(page,'html.parser')

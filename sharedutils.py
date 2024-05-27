@@ -512,10 +512,15 @@ def get_bitcoin(text):
     bitcoins = re.findall(r"[13][a-km-zA-HJ-NP-Z1-9]{25,36}$", text)
     return bitcoins
 
-def get_website(url):
+def hex_url(url):
     hash_object = hashlib.md5()
     hash_object.update(url.encode('utf-8'))
     hex_digest = hash_object.hexdigest()
+    return hex_digest
+
+
+def get_website(url,group_name):
+    hex_digest = hex_url(url)
     with sync_playwright() as play:
         try:
             browser = play.chromium.launch(proxy={"server": proxy_path},
@@ -548,6 +553,14 @@ def get_website(url):
             
             image.save(name)
             # browser.close()
+            
+            # save page content
+            filename = group_name + '-' + hex_digest + '.html'
+            name = os.path.join(os.getcwd(), 'source', filename)
+            with open(name, 'w', encoding='utf-8') as sitesource:
+                sitesource.write(page.content())
+                sitesource.close()
+
             return page.content()
         except PlaywrightTimeoutError:
             stdlog('Timeout!')

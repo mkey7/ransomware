@@ -14,7 +14,7 @@ from datetime import datetime
 
 def get_download(url):
     stdlog("0mega: find download => "+ url)
-    context = get_website(url)
+    context = get_website(url,'0mega')
     print(context)
     soup=BeautifulSoup(context,'html.parser')
     rows = soup.select('.tdownload') #[1:]
