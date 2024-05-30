@@ -13,7 +13,7 @@ from sharedutils import errlog, get_website
 from parse import appender, existingpost
 from datetime import datetime
 
-# TODO 爬取更详细的网页
+# TODO 爬取更详细的网页 还么有完成
 def get_url(url):
     try:
         page = get_website(url,'dunghill_leak')
@@ -21,6 +21,7 @@ def get_url(url):
         head_tag = soup.find('div',class_='block-heading text-left')
         title = head_tag.get_text()
         print(title)
+
 
     except:
         errlog("failed to get : "+ url)

@@ -1,17 +1,21 @@
-FROM python:3.12
+# docker build --network host -t ran .
+FROM debian:12
 
+# COPY debian-apt.sh debian-apt.sh
+# run ./debian-apt.sh
 
-RUN apt-get update -yy
+RUN apt-get update -y
 #RUN apt-get upgrade -yy
-RUN apt install -yy \
+RUN apt-get install -y \
     g++ gcc libxml2-dev \
     libxslt-dev libffi-dev \
-    make curl
+    make curl python3 pip \
+    vim
 
 COPY . /home/ransomwatch
 
-# RUN pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
-RUN pip3 install -r /home/ransomwatch/requirements.txt
+RUN pip3 install -r /home/ransomwatch/requirements.txt --break-system-packages
+
 
 RUN playwright install
 RUN playwright install-deps
