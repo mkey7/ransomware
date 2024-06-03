@@ -21,6 +21,9 @@ def get_url(url):
         head_tag = soup.find('div',class_='block-heading text-left')
         title = head_tag.get_text()
         print(title)
+        
+        div_tag = soup.find_next('div')
+        print(div_tag)
 
 
     except:
@@ -35,25 +38,33 @@ def main():
                 html_doc='source/'+filename
                 file=open(html_doc,'r')
                 soup=BeautifulSoup(file,'html.parser')
-                divs = soup.find_all('div',{"class": "custom-container2"})
-                if len(divs) == 0:
+                divs = soup.find_all('div',class_="news-container")
+                if not divs:
                     continue
+                print('find index.html')
                 for div in divs:
                     title = div.find('div', {"class": "ibody_title"}).text.strip()
+                    if existingpost(title,group_name):
+                        print(group_name + ' - ' + title +' is existed!')
+                        continue
                     description = div.find("div", {"class": "ibody_body"}).find_all('p')
                     description = description[2].text.strip()
                     link = "http://p66slxmtum2ox4jpayco6ai3qfehd5urgrs4oximjzklxcol264driqd.onion/" + div.find('div', {"class": "ibody_ft_right"}).a['href']
+                    print(link)
+                    get_url(link)
                     # appender(title, 'dunghill', description,'','',link)
                 divs = soup.find_all('div',{"class": "custom-container"})
                 for div in divs:
                     title = div.find('div', {"class": "ibody_title"}).text.strip()
                     
                     if existingpost(title,group_name):
+                        print(group_name + ' - ' + title +' is existed!')
                         continue
 
                     description = div.find("div", {"class": "ibody_body"}).find_all('p')
                     description = description[2].text.strip()
                     link = "http://p66slxmtum2ox4jpayco6ai3qfehd5urgrs4oximjzklxcol264driqd.onion/" + div.find('div', {"class": "ibody_ft_right"}).a['href']
+                    print(link)
 
                     get_url(link)
                     
