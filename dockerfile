@@ -1,9 +1,6 @@
 # docker build --network host -t ran .
 FROM debian:12
 
-# COPY debian-apt.sh debian-apt.sh
-# run ./debian-apt.sh
-
 RUN apt-get update -y
 #RUN apt-get upgrade -yy
 RUN apt-get install -y \
@@ -14,9 +11,8 @@ RUN apt-get install -y \
 
 COPY . /home/ransomwatch
 
-RUN pip3 install -r /home/ransomwatch/requirements.txt --break-system-packages
-
+RUN pip3 install -r /home/ransomwatch/requirements.txt \
+--break-system-packages
 
 RUN playwright install
 RUN playwright install-deps
-

@@ -29,8 +29,8 @@ import pika
 from PIL import Image
 from PIL import ImageDraw
 
-sockshost = '127.0.0.1'
-socksport = 9150
+sockshost = '115.160.185.148'
+socksport = 12908
 proxy_path = "socks5://"+sockshost+":"+str(socksport)
 # sockshost = '115.160.185.148'
 # socksport = 12908

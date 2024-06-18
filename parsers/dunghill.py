@@ -9,9 +9,8 @@ Rappel : def appender(post_title, group_name, description="", website="", publis
 """
 import os
 from bs4 import BeautifulSoup
-from sharedutils import errlog, get_website
+from sharedutils import errlog, get_website, stdlog
 from parse import appender, existingpost
-from datetime import datetime
 
 # TODO 爬取更详细的网页 还么有完成
 def get_url(url):
@@ -19,8 +18,9 @@ def get_url(url):
         page = get_website(url,'dunghill_leak')
         soup=BeautifulSoup(page,'html.parser')
         head_tag = soup.find('div',class_='block-heading text-left')
-        title = head_tag.get_text()
-        print(title)
+        title = head_tag.get_text().strip()
+        print('title:'+title+'!')
+        
         
         div_tag = soup.find_next('div')
         print(div_tag)
@@ -41,7 +41,8 @@ def main():
                 divs = soup.find_all('div',class_="news-container")
                 if not divs:
                     continue
-                print('find index.html')
+                stdlog('find dunghill_leak index.html')
+                divs = soup.find_all('div',{"class": "custom-container2"})
                 for div in divs:
                     title = div.find('div', {"class": "ibody_title"}).text.strip()
                     if existingpost(title,group_name):
@@ -66,7 +67,7 @@ def main():
                     link = "http://p66slxmtum2ox4jpayco6ai3qfehd5urgrs4oximjzklxcol264driqd.onion/" + div.find('div', {"class": "ibody_ft_right"}).a['href']
                     print(link)
 
-                    get_url(link)
+                    # get_url(link)
                     
                     # appender(title, 'dunghill', description,'','',link)
                 file.close()
