@@ -251,7 +251,7 @@ def sendMQ(data):
     
 
 
-def appender(post_title, group_name, description="", website="", published="", post_url="",email="",price="",pay="", download="", country=""):
+def appender(post_title, group_name, description="", website="", published="", post_url="",email="",price="",pay="", download="", country="",screenPath=''):
     '''
     append a new post to posts.json
     '''
@@ -288,13 +288,13 @@ def appender(post_title, group_name, description="", website="", published="", p
             website1 = ""
             
         ### Post screenshot
-        screenPath = ""
-        if post_url !="":
-            hash_object = hashlib.md5()
-            hash_object.update(post_url.encode('utf-8'))
-            hex_digest = hash_object.hexdigest()
-            screenshot(post_url,None,15000,hex_digest)
-            screenPath = existingscreenshot(hex_digest)
+        if screenPath == "":
+            if post_url !="":
+                hash_object = hashlib.md5()
+                hash_object.update(post_url.encode('utf-8'))
+                hex_digest = hash_object.hexdigest()
+                screenshot(post_url,None,15000,hex_digest)
+                screenPath = existingscreenshot(hex_digest)
 
         # newpost = posttemplate(post_title, group_name, str(datetime.today()),description,replace_http_slash(website),published,post_url,country)
         newpost = posttemplate(post_title, group_name, str(datetime.today()),description,website1,published,post_url,screenPath,price,pay,email,download,country)

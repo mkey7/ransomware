@@ -1,22 +1,18 @@
 import requests
-import socks
-import json
 from sharedutils import stdlog, dbglog, errlog   # , honk
-from sharedutils import openjson
+from sharedutils import openjson, proxies, existingpost
+from sharedutils import get_website, hex_url
 from datetime import datetime
 from parse import appender
 import urllib3
 
+# NOTE 这个网站目前非常复杂，需要重构
+# TODO 这个网站目前非常复杂，需要重构
 onion_url= 'https://hunters55rdxciehoqzwv7vgyv6nt37tbwax2reroyzxhou7my5ejyid.onion/api/public/companies'
 
 # Disable the warning about certificate verification
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
-# Assuming Tor is running on default port 9050.
-proxies = {
-    'http': 'socks5h://localhost:9050',
-    'https': 'socks5h://localhost:9050'
-}
 
 def get_country(id):
 # Define the base URL of the API and the endpoint
@@ -42,17 +38,9 @@ def get_country(id):
         # Handle other HTTP status codes as needed
         return "Internal Error"
 
-def existingpost(post_title, group_name):
-    '''
-    check if a post already exists in posts.json
-    '''
-    posts = openjson('posts.json')
-    # posts = openjson('posts.json')
-    for post in posts:
-        if post['post_title'].lower() == post_title.lower() and post['group_name'] == group_name:
-            return True
-    return False
-
+# NOTE 这个函数可以获取这个网站的勒索对象，不过获取的类型为json类型，数据样例如下：
+# title, 勒索金额，国家，网站
+# 'id' : '8980157002', 'title': 'Toyota Brazil', 'revenue': 1700000000, 'empl oyees': 3309, 'country': 'br', 'stocks': [], 'website': 'https://www.t oyota.com.br', 'exfiltrated_data': True, 'encrypted_data': False, 'upd ated_at': 1713002964
 def fetch_json_from_onion_url(onion_url):
     try:
         response = requests.get(onion_url, proxies=proxies,verify=False)
@@ -88,14 +76,21 @@ def main():
             title = item['title'].strip()
             country = get_country(item['country'])
             website = item['website']
+            revenue = item['revenue']
             exfiltration = item['exfiltrated_data']
             encryption = item['encrypted_data']
             published = item['updated_at']
             description = "Country : " +  country + " - Exfiltraded data : " + convert_text(exfiltration) +  " - Encrypted data : " + convert_text(encryption)
             post_url = "https://hunters55rdxciehoqzwv7vgyv6nt37tbwax2reroyzxhou7my5ejyid.onion/companies/" + id 
+            try:
+                get_website(post_url,'hunters')
+                hex_digest = hex_url(post_url)
+                screenpath =  'docs/screenshots/posts/hunters-' + hex_digest + '.png'
+            except:
+                screenpath = ""
             #print('-- ' + title + ' --> ' + post_url)
            
             """
                 def appender(post_title, group_name, description="", website="", published="", post_url=""):
             """
-            appender(title, 'hunters', description,website, convert_date(published),post_url)
+            appender(title, 'hunters', description,website, convert_date(published),post_url,price=revenue,country=country,screenPath=screenpath)

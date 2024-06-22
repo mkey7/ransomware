@@ -29,9 +29,11 @@ import pika
 from PIL import Image
 from PIL import ImageDraw
 
+#sockshost = '127.0.0.1'
+#socksport = 9150
 sockshost = '115.160.185.148'
 socksport = 12908
-proxy_path = "socks5://"+sockshost+":"+str(socksport)
+jroxy_path = "socks5://"+sockshost+":"+str(socksport)
 # sockshost = '115.160.185.148'
 # socksport = 12908
 # proxy_path = "http://"+sockshost+":"+str(socksport)
@@ -540,7 +542,7 @@ def get_website(url,group_name):
             page.wait_for_timeout(5000)
 
             # print('screenshots')
-            name = 'docs/screenshots/posts/' + hex_digest + '.png'
+            name = 'docs/screenshots/posts/' + group_name + '-' + hex_digest + '.png'
             page.screenshot(path=name, full_page=True)
             image = Image.open(name)
             
@@ -570,3 +572,13 @@ def get_website(url,group_name):
             errlog(exception)
         browser.close()
     
+def existingpost(post_title, group_name):
+    '''
+    check if a post already exists in posts.json
+    '''
+    posts = openjson('posts.json')
+    # posts = openjson('posts.json')
+    for post in posts:
+        if post['post_title'].lower() == post_title.lower() and post['group_name'] == group_name:
+            return True
+    return False

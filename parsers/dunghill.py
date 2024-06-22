@@ -1,4 +1,3 @@
-
 """
 +------------------------------+------------------+----------+
 | Description | Published Date | Victim's Website | Post URL |
@@ -24,6 +23,14 @@ def get_url(url):
         
         div_tag = soup.find_next('div')
         print(div_tag)
+
+        li_tag = soup.find_all('li')
+        download = []
+        for li in li_tag:
+            hrefs = li.find_all('a')
+            for h in hrefs:
+                download.append(h['href'])
+        print(download)
 
 
     except:

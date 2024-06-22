@@ -14,6 +14,13 @@ from datetime import datetime
 from sharedutils import errlog, find_slug_by_md5, extract_md5_from_filename,stdlog
 from urllib.parse import urlparse
 
+# TODO 从该网站的json
+url = "http://incbackrlasjesgpfu5brktfjknbqoahe2hhmqfhasc5fb56mtukn4yd.onion/api/blog/get-leaks"
+onion_url = "http://incblog7vmuq7rktic73r4ha4j757m3ptym37tyvifzp2roedyyzzxid.onion/blog/leak/"
+# post_url = onion_url + json[id]
+def getfromjson(url,onion_url):
+    print("")
+
 def main():
     for filename in os.listdir('source'):
         #try:
