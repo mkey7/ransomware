@@ -14,7 +14,7 @@ from datetime import datetime
 
 def get_download(url):
     stdlog("0mega: find download => "+ url)
-    context = get_website(url)
+    context = get_website(url,'0mega')
     print(context)
     soup=BeautifulSoup(context,'html.parser')
     rows = soup.select('.tdownload') #[1:]
@@ -48,7 +48,7 @@ def main():
                     pubdate = datetime.strptime(last_updated_date_str, "%Y-%m-%d").strftime("%Y-%m-%d %H:%M:%S.%f")
                     description = columns[2].get_text(strip=True)
                     link = columns[5].find('a')['href']
-                    link = url = find_slug_by_md5('0mega', extract_md5_from_filename(html_doc)) +str(link)
+                    link = find_slug_by_md5('0mega', extract_md5_from_filename(html_doc)) +str(link)
                     downloads = get_download(link)
                     appender(title, '0mega', description,"",pubdate,link,download=downloads)
                 file.close()

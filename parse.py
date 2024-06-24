@@ -76,7 +76,7 @@ def add_watermark(image_path, watermark_image_path='./docs/ransomwarelive.png'):
     stdlog('save watermaked image ' + image_path)
     original.save(image_path, 'PNG')
 
-def posttemplate(victim, group_name, timestamp,description,website,published,post_url,screen_path,price,pay,email,download,country):
+def posttemplate(victim, group_name, timestamp,description,website,published,post_url,screen_path,price,pay,email,download,country,sourcePath):
     '''
     assuming we have a new post - form the template we will use for the new entry in posts.json
     '''
@@ -94,18 +94,19 @@ def posttemplate(victim, group_name, timestamp,description,website,published,pos
         'pay'   : pay,
         'email' : email,
         'download' : download,
+        'source_path' : sourcePath,
     }
     dbglog(schema)
     return schema
 
-def screenshot(webpage,fqdn,delay=15000,output=None):
+def screenshot(webpage,fqdn,group_name,delay=15000,output=None):
     stdlog('webshot: {}'.format(webpage))
     if output is None:
         name = 'docs/screenshots/' + fqdn.replace('.', '-') + '.png'
         stdlog("Mode : blog")
     else: 
         stdlog('Post Screenshot --> ' + output)
-        name = 'docs/screenshots/posts/' + output + '.png'
+        name = 'docs/screenshots/posts/'+group_name+ "-" + output + '.png'
         stdlog("Mode: post")
     #todo 如果照片存在就跳过
     if os.path.exists(name):
@@ -172,11 +173,21 @@ def screenshot(webpage,fqdn,delay=15000,output=None):
     #except:
     #         stdlog('Impossible to webshot {}'.format(webpage))
     
-def existingscreenshot(output):
+def existingsource(output,group_name):
     '''
     检测快照截图是否存在，如果存在就直接使用存在的截图
     '''
-    path = 'docs/screenshots/posts/' + output + '.png'
+    path = 'source' + group_name + "-" + output + '.html'
+    if os.path.exists(path):
+        return path
+    else:
+        return ""
+
+def existingscreenshot(output,group_name):
+    '''
+    检测快照截图是否存在，如果存在就直接使用存在的截图
+    '''
+    path = 'docs/screenshots/posts/' + group_name + "-" + output + '.png'
     if os.path.exists(path):
         return path
     else:
@@ -251,7 +262,7 @@ def sendMQ(data):
     
 
 
-def appender(post_title, group_name, description="", website="", published="", post_url="",email="",price="",pay="", download="", country=""):
+def appender(post_title, group_name, description="", website="", published="", post_url="",email="",price="",pay="", download="", country="",screenPath='',sourcePath=""):
     '''
     append a new post to posts.json
     '''
@@ -288,16 +299,24 @@ def appender(post_title, group_name, description="", website="", published="", p
             website1 = ""
             
         ### Post screenshot
-        screenPath = ""
-        if post_url !="":
-            hash_object = hashlib.md5()
-            hash_object.update(post_url.encode('utf-8'))
-            hex_digest = hash_object.hexdigest()
-            screenshot(post_url,None,15000,hex_digest)
-            screenPath = existingscreenshot(hex_digest)
+        if screenPath == "":
+            if post_url !="":
+                hash_object = hashlib.md5()
+                hash_object.update(post_url.encode('utf-8'))
+                hex_digest = hash_object.hexdigest()
+                screenshot(post_url,None,group_name,15000,hex_digest)
+                screenPath = existingscreenshot(hex_digest,group_name)
+
+        # Post sourcePath
+        if sourcePath == "":
+            if post_url !="":
+                hash_object = hashlib.md5()
+                hash_object.update(post_url.encode('utf-8'))
+                hex_digest = hash_object.hexdigest()
+                screenPath = existingsource(hex_digest,group_name)
 
         # newpost = posttemplate(post_title, group_name, str(datetime.today()),description,replace_http_slash(website),published,post_url,country)
-        newpost = posttemplate(post_title, group_name, str(datetime.today()),description,website1,published,post_url,screenPath,price,pay,email,download,country)
+        newpost = posttemplate(post_title, group_name, str(datetime.today()),description,website1,published,post_url,screenPath,price,pay,email,download,country,sourcePath)
         stdlog('adding new post - ' + 'group:' + group_name + ' title:' + post_title)
         posts.append(newpost)
         with open('posts.json', 'w', encoding='utf-8') as outfile:

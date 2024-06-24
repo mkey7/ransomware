@@ -29,11 +29,14 @@ import pika
 from PIL import Image
 from PIL import ImageDraw
 
-sockshost = '127.0.0.1'
-socksport = 9150
+#sockshost = '127.0.0.1'
+#socksport = 9150
+sockshost = '115.160.185.148'
+socksport = 12908
+proxy_path = "socks5://"+sockshost+":"+str(socksport)
 # sockshost = '115.160.185.148'
 # socksport = 12908
-proxy_path = "socks5://"+sockshost+":"+str(socksport)
+# proxy_path = "http://"+sockshost+":"+str(socksport)
 
 # socks5h:// ensures we route dns requests through the socks proxy
 # reduces the risk of dns leaks & allows us to resolve hidden services
@@ -512,10 +515,18 @@ def get_bitcoin(text):
     bitcoins = re.findall(r"[13][a-km-zA-HJ-NP-Z1-9]{25,36}$", text)
     return bitcoins
 
-def get_website(url):
+def hex_url(url):
     hash_object = hashlib.md5()
     hash_object.update(url.encode('utf-8'))
     hex_digest = hash_object.hexdigest()
+    return hex_digest
+
+
+def get_website(url,group_name,proxy_path = proxy_path):
+    """
+    对网页就行爬取，保存html文件和网页图片快照
+    """
+    hex_digest = hex_url(url)
     with sync_playwright() as play:
         try:
             browser = play.chromium.launch(proxy={"server": proxy_path},
@@ -524,16 +535,17 @@ def get_website(url):
             context = browser.new_context(ignore_https_errors= True)
             page = context.new_page()
             stealth_sync(page)
-            page.goto(url)
+            page.goto(url, wait_until='load', timeout = 120000)
             page.bring_to_front()
+            page.wait_for_timeout(5000)
             page.mouse.move(x=500, y=400)
             page.wait_for_load_state('networkidle')
             page.mouse.wheel(delta_y=2000, delta_x=0)
             page.wait_for_load_state('networkidle')
             page.wait_for_timeout(5000)
 
-            print('screenshots')
-            name = 'docs/screenshots/posts/' + hex_digest + '.png'
+            # print('screenshots')
+            name = 'docs/screenshots/posts/' + group_name + '-' + hex_digest + '.png'
             page.screenshot(path=name, full_page=True)
             image = Image.open(name)
             
@@ -548,12 +560,21 @@ def get_website(url):
             
             image.save(name)
             # browser.close()
+            
+            # save page content
+            filename = group_name + '-' + hex_digest + '.html'
+            name = os.path.join(os.getcwd(), 'source', filename)
+            with open(name, 'w', encoding='utf-8') as sitesource:
+                sitesource.write(page.content())
+                sitesource.close()
+
             return page.content()
         except PlaywrightTimeoutError:
             stdlog('Timeout!')
         except Exception as exception:
             errlog(exception)
-        browser.close()
+        finally:
+            browser.close()
     
 def existingpost(post_title, group_name):
     '''
@@ -563,7 +584,5 @@ def existingpost(post_title, group_name):
     # posts = openjson('posts.json')
     for post in posts:
         if post['post_title'].lower() == post_title.lower() and post['group_name'] == group_name:
-            #dbglog('post already exists: ' + post_title)
             return True
-    dbglog('post does not exist: ' + post_title)
     return False
