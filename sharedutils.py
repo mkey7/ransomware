@@ -33,7 +33,7 @@ from PIL import ImageDraw
 #socksport = 9150
 sockshost = '115.160.185.148'
 socksport = 12908
-jroxy_path = "socks5://"+sockshost+":"+str(socksport)
+proxy_path = "socks5://"+sockshost+":"+str(socksport)
 # sockshost = '115.160.185.148'
 # socksport = 12908
 # proxy_path = "http://"+sockshost+":"+str(socksport)
@@ -522,7 +522,10 @@ def hex_url(url):
     return hex_digest
 
 
-def get_website(url,group_name):
+def get_website(url,group_name,proxy_path = proxy_path):
+    """
+    对网页就行爬取，保存html文件和网页图片快照
+    """
     hex_digest = hex_url(url)
     with sync_playwright() as play:
         try:
@@ -570,7 +573,8 @@ def get_website(url,group_name):
             stdlog('Timeout!')
         except Exception as exception:
             errlog(exception)
-        browser.close()
+        finally:
+            browser.close()
     
 def existingpost(post_title, group_name):
     '''
