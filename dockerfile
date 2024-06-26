@@ -18,4 +18,4 @@ RUN pip3 install -r /home/ransomwatch/requirements.txt \
 RUN playwright install
 RUN playwright install-deps
 
-CMD /etc/init.d/cron start
+# CMD /etc/init.d/cron start
