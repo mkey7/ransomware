@@ -1,4 +1,5 @@
 cd /home/ransomwatch
-python3 ransomwatch.py scrape
-python3 ransomwatch.py parse
-python3 get-country.py
+data >> /home/ransom.log
+python3 ransomwatch.py scrape >> /home/ransom.log
+python3 ransomwatch.py parse >> /home/ransom.log
+python3 get-country.py >> /home/ransom.log

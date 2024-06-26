@@ -33,17 +33,19 @@ from PIL import ImageDraw
 #socksport = 9150
 sockshost = '115.160.185.148'
 socksport = 12908
-proxy_path = "socks5://"+sockshost+":"+str(socksport)
-# sockshost = '115.160.185.148'
-# socksport = 12908
-# proxy_path = "http://"+sockshost+":"+str(socksport)
+# proxy_path = "socks5://"+sockshost+":"+str(socksport)
+proxy_path = "http://"+sockshost+":"+str(socksport)
 
 # socks5h:// ensures we route dns requests through the socks proxy
 # reduces the risk of dns leaks & allows us to resolve hidden services
 proxies = {
-    'http':  'socks5h://' + str(sockshost) + ':' + str(socksport),
-    'https': 'socks5h://' + str(sockshost) + ':' + str(socksport)
+    'http':  'http://' + str(sockshost) + ':' + str(socksport),
+    'https': 'https://' + str(sockshost) + ':' + str(socksport)
 } 
+# proxies = {
+#     'http':  'socks5h://' + str(sockshost) + ':' + str(socksport),
+#     'https': 'socks5h://' + str(sockshost) + ':' + str(socksport)
+# } 
 
 logging.basicConfig(
     format='%(asctime)s,%(msecs)d %(levelname)-8s %(message)s',

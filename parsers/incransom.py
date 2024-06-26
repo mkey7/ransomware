@@ -32,6 +32,11 @@ def main():
     url = "http://incbackrlasjesgpfu5brktfjknbqoahe2hhmqfhasc5fb56mtukn4yd.onion/api/blog/get-leaks"
     onion_url = "http://incblog7vmuq7rktic73r4ha4j757m3ptym37tyvifzp2roedyyzzxid.onion/blog/leak/"
     data = getfromjson(url)
+
+    if data == None:
+        print("incransom failed!")
+        return 0
+
     print(data['payload'])
 
     for item in data['payload']:
@@ -39,19 +44,27 @@ def main():
         website = item['url']
         id = item['id']
         post_url = onion_url+id
-        
-        web = get_website(post_url,group_name)
-
-        soup=BeautifulSoup(web,'html.parser')
-        description_tags=soup.find_all('div',class_="flex flex-col w-full")
-        description = description_tags[1].get_text().strip()
-        print(description)
-
+        print("title:"+title)
+        print("website:"+website)
+        print("post_url:"+post_url)
+        description = ''
         downloads = []
-        download_tags = soup.find('div',class_="flex flex-col gap-2 mt-6",string="Download files:")
-        print(download_tags)
-        a_tags = download_tags.find_all('a')
-        for i in a_tags:
-            downloads.append(i['href'])
+        
+        try:
+            web = get_website(post_url,group_name)
 
+            soup=BeautifulSoup(web,'html.parser')
+            description_tags=soup.find_all('div',class_="flex flex-col w-full")
+            description = description_tags[1].get_text().strip()
+            print('description'+description)
 
+            download_tags = soup.find('div',class_="grid 2xl:grid-cols-3 xl:grid-cols-2 gap-5")
+            if download_tags != None:
+                a_tags = download_tags.find_all('a')
+                for i in a_tags:
+                    print(i['href'])
+                    downloads.append(i['href'])
+        except:
+            print("incransom failed!")
+
+        appender(title,group_name,description,website,"",post_url,download=downloads)

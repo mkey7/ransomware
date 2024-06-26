@@ -3,6 +3,7 @@ from bs4 import BeautifulSoup
 from sharedutils import errlog
 from parse import appender 
 
+# TODO 该这个网站了
 def main():
     for filename in os.listdir('source'):
         try:
